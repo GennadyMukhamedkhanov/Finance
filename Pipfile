@@ -9,6 +9,9 @@ django = "*"
 django-environ = "*"
 djangorestframework = "*"
 django-service-objects = "*"
+factory-boy = "*"
+basic-math-calculator = "*"
+faker = "*"
 
 [dev-packages]
 
