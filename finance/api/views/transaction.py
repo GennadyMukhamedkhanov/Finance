@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,12 +9,13 @@ from api.services.transaction.delete import DeleteTransactionService
 from api.services.transaction.get import GetTransactionService
 from api.services.transaction.list import ListTransactionsService
 from api.services.transaction.put import PutTransactionService
-from api.services.user.delete import DeleteUserService
 
 
 class CreateListTransactionsView(APIView):
 
     def get(self, request):
+        self.permission_classes = [IsAuthenticated, ]
+        self.check_permissions(request)
         outcome = ListTransactionsService.execute({})
         return Response(TransactionSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
 
@@ -23,15 +25,22 @@ class CreateListTransactionsView(APIView):
 
 
 class GetPutDeleteTransactionsView(APIView):
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request, **kwargs):
-        outcome = GetTransactionService.execute(kwargs)
+        outcome = GetTransactionService.execute(
+            {
+                'id': kwargs.get('id'),
+                'user_id': request.user.id,
+            }
+        )
         return Response(TransactionSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
     def put(self, request, **kwargs):
         outcome = PutTransactionService.execute(
             {
                 'id': kwargs.get('id'),
+                'user_id': request.user.id,
                 'user': request.data.get('user'),
                 'amount': request.data.get('amount'),
                 'date': request.data.get('date'),
@@ -42,5 +51,10 @@ class GetPutDeleteTransactionsView(APIView):
         return Response(TransactionSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
     def delete(self, request, **kwargs):
-        DeleteTransactionService.execute(kwargs)
+        DeleteTransactionService.execute(
+            {
+                'id': kwargs.get('id'),
+                'user_id': request.user.id,
+            }
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)

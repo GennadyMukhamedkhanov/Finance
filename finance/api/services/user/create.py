@@ -1,5 +1,6 @@
 from django import forms
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from service_objects.errors import ValidationError
 from service_objects.services import Service
 
@@ -28,10 +29,16 @@ class CreateUsersService(Service):
 
     @property
     def _create_user(self):
-        return User.objects.create_user(
+        user = User.objects.create_user(
             email=self.cleaned_data['email'],
             first_name=self.cleaned_data['first_name'],
             last_name=self.cleaned_data['last_name'],
             username=self.cleaned_data['username'],
             password=self.cleaned_data['password']
         )
+        self.create_token(user)
+
+        return User
+
+    def create_token(self, user):
+        Token.objects.create(user=user)

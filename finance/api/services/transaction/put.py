@@ -8,6 +8,7 @@ from api.models import Transaction, User
 
 class PutTransactionService(Service):
     id = forms.IntegerField()
+    user_id = forms.IntegerField()
     user = forms.IntegerField(required=False)
     amount = forms.DecimalField(required=False)
     date = forms.DateTimeField(required=False)
@@ -15,6 +16,7 @@ class PutTransactionService(Service):
     category = forms.CharField(required=False)
 
     def process(self):
+        self.check_positive_number(self.cleaned_data['amount'])
         self.result = self._update_transaction
         return self
 
@@ -36,6 +38,11 @@ class PutTransactionService(Service):
                 message='Транзакции с таким id не существует.',
                 response_status=status.HTTP_400_BAD_REQUEST
             )
+        if transaction.first().user.id != self.cleaned_data['user_id']:
+            raise ValidationError(
+                message='Вы не можете изменить данные этой транзакции',
+                response_status=status.HTTP_400_BAD_REQUEST
+            )
 
         return transaction.first()
 
@@ -44,8 +51,16 @@ class PutTransactionService(Service):
             user = User.objects.filter(id=self.cleaned_data['user'])
             if not user.exists():
                 raise ValidationError(
-                    message='Пользователя с  переданным id не существует существует.',
+                    message='Пользователя с  переданным id не существует.',
                     response_status=status.HTTP_400_BAD_REQUEST
                 )
             return True
         return False
+
+    @staticmethod
+    def check_positive_number(num):
+        if num <= 0:
+            raise ValidationError(
+                message='Сумма транзакции должна быть больше нуля',
+                response_status=status.HTTP_400_BAD_REQUEST
+            )

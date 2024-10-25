@@ -8,6 +8,7 @@ from api.models import User
 
 class DeleteUserService(Service):
     id = forms.IntegerField()
+    user_id = forms.IntegerField()
 
     def process(self):
         self.result = self._delete_user
@@ -20,6 +21,11 @@ class DeleteUserService(Service):
         return True
 
     def user_presence(self):
+        if self.cleaned_data['id'] != self.cleaned_data['user_id']:
+            raise ValidationError(
+                message='Вы не можете удалить данные этого пользователя',
+                response_status=status.HTTP_400_BAD_REQUEST
+            )
         user = User.objects.filter(id=self.cleaned_data['id'])
         if not user.exists():
             raise ValidationError(

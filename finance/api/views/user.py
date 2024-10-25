@@ -1,3 +1,4 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -12,6 +13,9 @@ from api.services.user.put import PutUserService
 class CreateListUsersView(APIView):
 
     def get(self, request):
+        self.permission_classes = [IsAuthenticated, ]
+        self.check_permissions(request)
+
         outcome = ListUsersService.execute({})
         return Response(UserSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
 
@@ -23,13 +27,23 @@ class CreateListUsersView(APIView):
 class GetPutDeleteUserView(APIView):
 
     def get(self, request, **kwargs):
-        outcome = GetUserService.execute(kwargs)
+        self.permission_classes = [IsAuthenticated, ]
+        self.check_permissions(request)
+        outcome = GetUserService.execute(
+            {
+                'id': kwargs.get('id'),
+                'user_id': request.user.id,
+            }
+        )
         return Response(UserSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
     def put(self, request, **kwargs):
+        self.permission_classes = [IsAuthenticated, ]
+        self.check_permissions(request)
         outcome = PutUserService.execute(
             {
                 'id': kwargs.get('id'),
+                'user_id': request.user.id,
                 'email': request.data.get('email'),
                 'first_name': request.data.get('first_name'),
                 'last_name': request.data.get('last_name'),
@@ -40,5 +54,12 @@ class GetPutDeleteUserView(APIView):
         return Response(UserSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
     def delete(self, request, **kwargs):
-        DeleteUserService.execute(kwargs)
+        self.permission_classes = [IsAuthenticated, ]
+        self.check_permissions(request)
+        DeleteUserService.execute(
+            {
+                'id': kwargs.get('id'),
+                'user_id': request.user.id,
+            }
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)

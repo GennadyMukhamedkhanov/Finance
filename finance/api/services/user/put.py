@@ -8,6 +8,7 @@ from api.models import User
 
 class PutUserService(Service):
     id = forms.IntegerField()
+    user_id = forms.IntegerField()
     email = forms.EmailField(required=False)
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
@@ -21,7 +22,7 @@ class PutUserService(Service):
     @property
     def _update_user(self):
         obj = self.user_presence()
-        obj.email = self.cleaned_data['email'] if self.email_presence() else obj.email
+        obj.email = self.cleaned_data['email'] if self.email_presence(obj) else obj.email
         obj.first_name = self.cleaned_data['first_name'] if self.cleaned_data['first_name'] else obj.first_name
         obj.last_name = self.cleaned_data['last_name'] if self.cleaned_data['last_name'] else obj.last_name
         obj.username = self.cleaned_data['username'] if self.cleaned_data['username'] else obj.username
@@ -30,6 +31,11 @@ class PutUserService(Service):
         return obj
 
     def user_presence(self):
+        if self.cleaned_data['id'] != self.cleaned_data['user_id']:
+            raise ValidationError(
+                message='Вы не можете изменить данные этого пользователя',
+                response_status=status.HTTP_400_BAD_REQUEST
+            )
         user = User.objects.filter(id=self.cleaned_data['id'])
         if not user.exists():
             raise ValidationError(
@@ -39,12 +45,13 @@ class PutUserService(Service):
 
         return user.first()
 
-    def email_presence(self):
-        if self.cleaned_data['email']:
-            user = User.objects.filter(email=self.cleaned_data['email'])
-            if user.exists():
+    def email_presence(self, obj):
+        email = self.cleaned_data.get('email')
+        if email:
+            user = User.objects.filter(email=email).first()
+            if user and user != obj:
                 raise ValidationError(
-                    message='Пользователь с таким email уже существует.',
+                    'Пользователь с таким email уже существует.',
                     response_status=status.HTTP_400_BAD_REQUEST
                 )
             return True
