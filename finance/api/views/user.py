@@ -1,3 +1,4 @@
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,8 +17,13 @@ class CreateListUsersView(APIView):
         self.permission_classes = [IsAuthenticated, ]
         self.check_permissions(request)
 
+        page_size = request.query_params.get('page_size')
+        pagination = PageNumberPagination()
+        if page_size and int(page_size) > 0:
+            pagination.page_size = page_size
         outcome = ListUsersService.execute({})
-        return Response(UserSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
+        paginate_queryset = pagination.paginate_queryset(outcome.result, request)
+        return Response(UserSerializer(paginate_queryset, many=True).data, status=status.HTTP_200_OK)
 
     def post(self, request):
         CreateUsersService.execute(request.data)
