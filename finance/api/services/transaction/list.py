@@ -10,4 +10,4 @@ class ListTransactionsService(Service):
 
     @property
     def _transactions(self):
-        return Transaction.objects.all()
+        return Transaction.objects.all().order_by('id')
