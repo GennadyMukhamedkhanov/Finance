@@ -140,8 +140,6 @@ TRANSACTION_GET_VIEW = {
     },
 }
 
-
-
 TRANSACTION_PUT_VIEW = {
     'request_body': openapi.Schema(
         type=openapi.TYPE_OBJECT,
@@ -194,8 +192,6 @@ TRANSACTION_PUT_VIEW = {
 
     },
 }
-
-
 
 TRANSACTION_DELETE_VIEW = {
 
