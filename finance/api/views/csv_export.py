@@ -1,11 +1,16 @@
 import csv
 from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
 
+from api.docs.export_transaction import EXPORT_TRANSACTION_VIEW
 from api.models import Transaction, User
 
 
 class ExportTransactionsCSV(APIView):
+    permission_classes = [IsAuthenticated, ]
+    @swagger_auto_schema(**EXPORT_TRANSACTION_VIEW)
     def get(self, request, *args, **kwargs):
         # Создаем HTTP ответ с заголовком для CSV
         response = HttpResponse(content_type='text/csv; charset=utf-8')
@@ -18,10 +23,9 @@ class ExportTransactionsCSV(APIView):
         writer.writerow([])  # Пустая строка
         writer.writerow(['Пользователь', 'Сумма', 'Дата', 'Тип', 'Категория'])
 
-        user = User.objects.get(id=1204)
 
         # Получаем транзакции для текущего пользователя
-        transactions = Transaction.objects.filter(user=user)
+        transactions = Transaction.objects.filter(user_id=request.user.id)
 
         for transaction in transactions:
             writer.writerow([

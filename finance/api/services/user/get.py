@@ -16,13 +16,13 @@ class GetUserService(Service):
     def _search_user(self):
         if self.cleaned_data['id'] != self.cleaned_data['user_id']:
             raise ValidationError(
-                message='Вы не можете изменить данные этого пользователя',
+                message='Вы не можете посмотреть данные этого пользователя',
                 response_status=status.HTTP_400_BAD_REQUEST
             )
         user = User.objects.filter(id=self.cleaned_data['id'])
         if not user.exists():
             raise ValidationError(
-                message='Пользователь с таким id не существует.',
+                message='Пользователя с таким id не существует.',
                 response_status=status.HTTP_404_NOT_FOUND
             )
         return user.first()

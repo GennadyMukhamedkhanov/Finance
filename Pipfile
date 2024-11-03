@@ -12,6 +12,7 @@ django-service-objects = "*"
 factory-boy = "*"
 basic-math-calculator = "*"
 faker = "*"
+drf-yasg = "*"
 
 [dev-packages]
 

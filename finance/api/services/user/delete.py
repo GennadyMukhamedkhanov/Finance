@@ -30,7 +30,7 @@ class DeleteUserService(Service):
         if not user.exists():
             raise ValidationError(
                 message='Пользователь с таким id не существует.',
-                response_status=status.HTTP_400_BAD_REQUEST
+                response_status=status.HTTP_404_NOT_FOUND
             )
 
         return user.first()

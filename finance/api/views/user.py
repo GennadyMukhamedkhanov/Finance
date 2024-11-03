@@ -1,8 +1,12 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+
+from api.docs.user import (USER_CREATE_VIEW, USER_LIST_VIEW, USER_GET_VIEW,
+                           USER_PUT_VIEW, USER_DELETE_VIEW)
 from api.serializers.user.list import UserSerializer
 from api.services.user.create import CreateUsersService
 from api.services.user.delete import DeleteUserService
@@ -12,7 +16,7 @@ from api.services.user.put import PutUserService
 
 
 class CreateListUsersView(APIView):
-
+    @swagger_auto_schema(**USER_LIST_VIEW)
     def get(self, request):
         self.permission_classes = [IsAuthenticated, ]
         self.check_permissions(request)
@@ -25,13 +29,14 @@ class CreateListUsersView(APIView):
         paginate_queryset = pagination.paginate_queryset(outcome.result, request)
         return Response(UserSerializer(paginate_queryset, many=True).data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(**USER_CREATE_VIEW)
     def post(self, request):
         CreateUsersService.execute(request.data)
         return Response(status=status.HTTP_201_CREATED)
 
 
 class GetPutDeleteUserView(APIView):
-
+    @swagger_auto_schema(**USER_GET_VIEW)
     def get(self, request, **kwargs):
         self.permission_classes = [IsAuthenticated, ]
         self.check_permissions(request)
@@ -43,6 +48,7 @@ class GetPutDeleteUserView(APIView):
         )
         return Response(UserSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(**USER_PUT_VIEW)
     def put(self, request, **kwargs):
         self.permission_classes = [IsAuthenticated, ]
         self.check_permissions(request)
@@ -59,6 +65,7 @@ class GetPutDeleteUserView(APIView):
         )
         return Response(UserSerializer(outcome.result).data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(**USER_DELETE_VIEW)
     def delete(self, request, **kwargs):
         self.permission_classes = [IsAuthenticated, ]
         self.check_permissions(request)
