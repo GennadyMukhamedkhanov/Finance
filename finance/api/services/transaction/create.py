@@ -1,7 +1,8 @@
 from django import forms
 from service_objects.services import Service
 from rest_framework import status
-from service_objects.errors import ValidationError
+from rest_framework.exceptions import ParseError
+
 from api.models import Transaction
 
 
@@ -26,8 +27,7 @@ class CreateTransactionService(Service):
 
     def check_positive_number(self, num):
         if num <= 0:
-            raise ValidationError(
-                message='Сумма транзакции должна быть больше нуля',
-                response_status=status.HTTP_400_BAD_REQUEST
+            raise ParseError(
+                detail='Сумма транзакции должна быть больше нуля',
             )
         return self.cleaned_data['amount']

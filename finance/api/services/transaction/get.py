@@ -1,7 +1,8 @@
 from service_objects.services import Service
 from api.models import Transaction
 from django import forms
-from service_objects.errors import ValidationError
+from rest_framework.exceptions import NotFound, ParseError
+
 from rest_framework import status
 
 
@@ -18,13 +19,11 @@ class GetTransactionService(Service):
 
         transaction = Transaction.objects.filter(id=self.cleaned_data['id'])
         if not transaction.exists():
-            raise ValidationError(
-                message='Транзакции с таким id не существует.',
-                response_status=status.HTTP_404_NOT_FOUND
+            raise NotFound(
+                detail='Транзакции с таким id не существует.',
             )
         if transaction.first().user.id != self.cleaned_data['user_id']:
-            raise ValidationError(
-                message='Вы не можете посмотреть данные этой транзакции',
-                response_status=status.HTTP_400_BAD_REQUEST
+            raise ParseError(
+                detail='Вы не можете удалить данные этой транзакции',
             )
         return transaction.first()

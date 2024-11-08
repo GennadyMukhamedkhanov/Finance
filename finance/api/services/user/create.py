@@ -1,7 +1,6 @@
 from django import forms
-from rest_framework import status
 from rest_framework.authtoken.models import Token
-from service_objects.errors import ValidationError
+from rest_framework.exceptions import ParseError
 from service_objects.services import Service
 
 from api.models import User
@@ -22,9 +21,8 @@ class CreateUsersService(Service):
     def user_presence(self):
         users = User.objects.filter(email=self.cleaned_data['email'])
         if users.exists():
-            raise ValidationError(
-                message='Пользователь с таким email уже существует.',
-                response_status=status.HTTP_400_BAD_REQUEST
+            raise ParseError(
+                detail='Пользователь с таким email уже существует.',
             )
 
     @property

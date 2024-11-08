@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework.authtoken',
-    'drf_yasg'
+    'drf_yasg',
+    'service_objects'
 ]
 
 MIDDLEWARE = [
@@ -109,6 +110,10 @@ AUTH_USER_MODEL = 'api.User'
 
 
 REST_FRAMEWORK = {
+
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2,
 
