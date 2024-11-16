@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  finance-backend:
+    build:
+      context: /finance
+      dockerfile: Dockerfile
+    command: >
+      bash -c "pipenv run python manage.py makemigrations && pipenv run python manage.py migrate && pipenv run python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    networks:
+      - my_network
+    depends_on:
+      - database
+    restart: always
+
+
+  database:
+    image: postgres:14.6-alpine
+    environment:
+      - POSTGRES_PASSWORD=198616Gm
+      - POSTGRES_USER=usersup
+      - POSTGRES_DB=finance_db
+
+    ports:
+      - "5432:5432"
+    networks:
+      - my_network
+
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
+      - media:/var/uploads/
+      - static:/var/static/
+    networks:
+      - my_network
+
+
+volumes:
+  static_volume:
+  media_volume:
+  static:
+  media:
+
+
+networks:
+  my_network:
+    driver: bridge
