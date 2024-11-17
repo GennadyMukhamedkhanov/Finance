@@ -18,6 +18,7 @@ urlpatterns = [
     path('export/transactions/csv/', ExportTransactionsCSV.as_view(), name='export_transactions_csv')
 
 
-
-
 ]
+
+# DATABASE_URL=postgres://usersup:198616Gm@database:5432/finance_db при запуске docker-compose в .env
+# DATABASE_URL=postgres://UserSup:198616Gm@localhost:5432/finance_db

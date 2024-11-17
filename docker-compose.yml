@@ -43,6 +43,27 @@ services:
     networks:
       - my_network
 
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
+  celery:
+    build:
+      context: /finance
+      dockerfile: Dockerfile
+    command: >
+      bash -c "pipenv run celery -A conf worker --loglevel=info"
+    networks:
+      - my_network
+    depends_on:
+      - finance-backend
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    restart: always
 
 volumes:
   static_volume:
@@ -54,3 +75,5 @@ volumes:
 networks:
   my_network:
     driver: bridge
+
+
