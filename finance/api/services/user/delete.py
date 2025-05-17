@@ -1,11 +1,7 @@
-from django import forms
-from rest_framework import status
-from rest_framework.exceptions import NotFound, ParseError
-
-
-from service_objects.services import Service
-
 from api.models import User
+from django import forms
+from rest_framework.exceptions import NotFound, ParseError
+from service_objects.services import Service
 
 
 class DeleteUserService(Service):
@@ -23,14 +19,14 @@ class DeleteUserService(Service):
         return True
 
     def user_presence(self):
-        if self.cleaned_data['id'] != self.cleaned_data['user_id']:
+        if self.cleaned_data["id"] != self.cleaned_data["user_id"]:
             raise ParseError(
-                detail='Вы не можете удалить данные этого пользователя',
+                detail="Вы не можете удалить данные этого пользователя",
             )
-        user = User.objects.filter(id=self.cleaned_data['id'])
+        user = User.objects.filter(id=self.cleaned_data["id"])
         if not user.exists():
             raise NotFound(
-                detail='Пользователь с таким id не существует.',
+                detail="Пользователь с таким id не существует.",
             )
 
         return user.first()

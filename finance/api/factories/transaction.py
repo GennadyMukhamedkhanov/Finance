@@ -1,8 +1,7 @@
 import factory
-from faker import Faker
-
 from api.factories.user import UserFactory
 from api.models import Transaction
+from faker import Faker
 
 fake = Faker()
 
@@ -16,5 +15,3 @@ class TransactionFactory(factory.django.DjangoModelFactory):
     type = factory.Iterator([Transaction.INCOME, Transaction.EXPENSE])
     category = factory.LazyAttribute(lambda _: fake.word())
     date = factory.LazyFunction(fake.date_time)
-
-

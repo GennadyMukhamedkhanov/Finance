@@ -1,9 +1,8 @@
+from api.models import User
 from django import forms
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ParseError
 from service_objects.services import Service
-
-from api.models import User
 
 
 class CreateUsersService(Service):
@@ -19,20 +18,20 @@ class CreateUsersService(Service):
         return self
 
     def user_presence(self):
-        users = User.objects.filter(email=self.cleaned_data['email'])
+        users = User.objects.filter(email=self.cleaned_data["email"])
         if users.exists():
             raise ParseError(
-                detail='Пользователь с таким email уже существует.',
+                detail="Пользователь с таким email уже существует.",
             )
 
     @property
     def _create_user(self):
         user = User.objects.create_user(
-            email=self.cleaned_data['email'],
-            first_name=self.cleaned_data['first_name'],
-            last_name=self.cleaned_data['last_name'],
-            username=self.cleaned_data['username'],
-            password=self.cleaned_data['password']
+            email=self.cleaned_data["email"],
+            first_name=self.cleaned_data["first_name"],
+            last_name=self.cleaned_data["last_name"],
+            username=self.cleaned_data["username"],
+            password=self.cleaned_data["password"],
         )
         self.create_token(user)
 

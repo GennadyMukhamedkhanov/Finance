@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4  # Укажите актуальную версию Ruff
+    hooks:
+      # Хук для проверки кода
+      - id: ruff
+        args: ["--fix"]
+        exclude: "(\\.git|__pycache__|\\.yml\\.enc|finance/api/migrations|somedirectory/subdirectory|finance/api/docs|finance/api/models/__init__\\.py|finance/api/test/__init__\\.py)"
+      # Хук для форматирования кода
+      - id: ruff-format
+        exclude: "(\\.git|__pycache__|\\.yml\\.enc|finance/api/migrations|somedirectory/subdirectory|finance/api/docs|finance/api/models/__init__\\.py|finance/api/test/__init__\\.py)"

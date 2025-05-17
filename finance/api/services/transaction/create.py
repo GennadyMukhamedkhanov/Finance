@@ -1,9 +1,7 @@
-from django import forms
-from service_objects.services import Service
-from rest_framework import status
-from rest_framework.exceptions import ParseError
-
 from api.models import Transaction
+from django import forms
+from rest_framework.exceptions import ParseError
+from service_objects.services import Service
 
 
 class CreateTransactionService(Service):
@@ -19,15 +17,15 @@ class CreateTransactionService(Service):
     @property
     def _create_transaction(self):
         return Transaction.objects.create(
-            user_id=self.cleaned_data['user'],
-            amount=self.check_positive_number(self.cleaned_data['amount']),
-            type=self.cleaned_data['type'],
-            category=self.cleaned_data['category']
+            user_id=self.cleaned_data["user"],
+            amount=self.check_positive_number(self.cleaned_data["amount"]),
+            type=self.cleaned_data["type"],
+            category=self.cleaned_data["category"],
         )
 
     def check_positive_number(self, num):
         if num <= 0:
             raise ParseError(
-                detail='Сумма транзакции должна быть больше нуля',
+                detail="Сумма транзакции должна быть больше нуля",
             )
-        return self.cleaned_data['amount']
+        return self.cleaned_data["amount"]

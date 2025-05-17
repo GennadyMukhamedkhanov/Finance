@@ -1,10 +1,8 @@
-from service_objects.services import Service
-from rest_framework.exceptions import NotFound, ParseError
-
-
 from api.models import User
 from django import forms
-from rest_framework import status
+from rest_framework.exceptions import NotFound, ParseError
+from service_objects.services import Service
+
 
 class GetUserService(Service):
     id = forms.IntegerField()
@@ -16,14 +14,13 @@ class GetUserService(Service):
 
     @property
     def _search_user(self):
-        if self.cleaned_data['id'] != self.cleaned_data['user_id']:
+        if self.cleaned_data["id"] != self.cleaned_data["user_id"]:
             raise ParseError(
-                detail='Вы не можете посмотреть данные этого пользователя',
+                detail="Вы не можете посмотреть данные этого пользователя",
             )
-        user = User.objects.filter(id=self.cleaned_data['id'])
+        user = User.objects.filter(id=self.cleaned_data["id"])
         if not user.exists():
             raise NotFound(
-                detail='Пользователя с таким id не существует.',
+                detail="Пользователя с таким id не существует.",
             )
         return user.first()
-

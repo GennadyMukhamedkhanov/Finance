@@ -1,0 +1,17 @@
+line-length = 120  # Совместимость с Black и Flake8
+exclude = [
+    ".git",
+    "__pycache__",
+    "*.yml.enc",
+    "finance/api/migrations/*",
+    "somedirectory/subdirectory/*",
+    "finance/api/docs/",
+    "finance/api/models/__init__.py",
+    "finance/api/test/__init__.py",
+]  # Исключение файлов и директорий
+
+[lint]
+select = ["E", "F", "W", "I", "B"]  # Включение необходимых проверок
+fixable = ["I", "E", "W"]  # Автоисправление для импортов и форматирования
+
+ignore = ["B904", "B008"]  # Игнорировать конкретные правила

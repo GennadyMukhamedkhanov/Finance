@@ -1,7 +1,6 @@
-from rest_framework import serializers
-
 from api.models import Transaction
 from api.serializers.user.list import UserSerializer
+from rest_framework import serializers
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -9,11 +8,4 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = (
-            'id',
-            'user',
-            'amount',
-            'date',
-            'type',
-            'category'
-        )
+        fields = ("id", "user", "amount", "date", "type", "category")
